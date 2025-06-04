@@ -75,3 +75,6 @@ class Config:
         """Get the full path to an index directory."""
         index_name = index_name or cls.DEFAULT_INDEX_NAME
         return cls.INDICES_DIR / index_name
+    
+
+DEFAULT_EMBEDDING_MODEL = "all-MiniLM-L6-v2"
