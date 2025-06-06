@@ -2,11 +2,13 @@
 External source integration for fact-checking.
 Based on blog post 4 code.
 """
-import os
+#import os
 import re
 import requests
 from typing import List
 from openai import OpenAI
+import config as cfg
+from app.utils import debug_print
 
 
 def call_openai(system_prompt: str, user_prompt: str, model: str = "gpt-4o-mini", temperature: float = 0.1) -> str:
@@ -84,7 +86,7 @@ def search_semantic_scholar(query: str, max_results: int = 10) -> List[str]:
     Returns:
         List of abstract texts
     """
-    url = "https://api.semanticscholar.org/graph/v1/paper/search"
+    url = cfg.SEMANTIC_SCHOLAR_URL
     params = {"query": query, "limit": max_results, "fields": "title,abstract"}
 
     try:
@@ -97,13 +99,13 @@ def search_semantic_scholar(query: str, max_results: int = 10) -> List[str]:
             if article.get('abstract'):
                 abstracts.append(article['abstract'])
             else:
-                print("No abstract available for one article")
+                debug_print("No abstract available for one article")
         
-        print(f"Retrieved {len(abstracts)} abstracts from Semantic Scholar")
+        debug_print(f"Retrieved {len(abstracts)} abstracts from Semantic Scholar")
         return abstracts
         
     except Exception as e:
-        print(f"Error searching Semantic Scholar: {e}")
+        debug_print(f"Error searching Semantic Scholar: {e}")
         return []
 
 
@@ -140,5 +142,5 @@ def prepare_abstract_sentences(abstracts: List[str], min_len: int = 10) -> List[
     for abs_text in abstracts:
         sentences.extend(_split_into_sentences(abs_text, min_len=min_len))
     
-    print(f"Prepared {len(sentences)} sentences from {len(abstracts)} abstracts")
+    debug_print(f"Prepared {len(sentences)} sentences from {len(abstracts)} abstracts")
     return sentences

@@ -4,6 +4,7 @@ Based on blog post 3 code.
 """
 import re
 from typing import List, Dict
+from app.utils import debug_print
 
 
 def break_down_query(complex_question: str, llm) -> List[str]:
@@ -30,8 +31,8 @@ Provide the simpler questions as a numbered list:
 """
     
     response = llm.complete(prompt)
-    print("=== QUERY BREAKDOWN ===")
-    print(response.text)
+    debug_print("=== QUERY BREAKDOWN ===")
+    debug_print(response.text)
     
     # Extract the sub-questions
     lines = response.text.strip().split('\n')
@@ -61,8 +62,8 @@ def multi_stage_retrieval(complex_question: str, query_engine, llm) -> Dict:
     Returns:
         Dictionary with multi-stage results
     """
-    print("=== MULTI-STAGE RETRIEVAL ===")
-    print("=" * 50)
+    debug_print("=== MULTI-STAGE RETRIEVAL ===")
+    debug_print("=" * 50)
     
     # Step 1: Break down the question
     sub_questions = break_down_query(complex_question, llm)
@@ -72,12 +73,12 @@ def multi_stage_retrieval(complex_question: str, query_engine, llm) -> Dict:
     all_sources = []
     
     for i, sub_q in enumerate(sub_questions):
-        print(f"\n--- Sub-question {i+1}: {sub_q} ---")
+        debug_print(f"\n--- Sub-question {i+1}: {sub_q} ---")
         response = query_engine.query(sub_q)
         sub_answer = response.response
         sources = response.source_nodes
         
-        print(f"Answer: {sub_answer[:150]}...")
+        debug_print(f"Answer: {sub_answer[:150]}...")
         
         sub_answers.append({
             'question': sub_q,
@@ -91,7 +92,7 @@ def multi_stage_retrieval(complex_question: str, query_engine, llm) -> Dict:
                 all_sources.append(source)
     
     # Step 3: Synthesize final answer
-    print(f"\n=== SYNTHESIZING FINAL ANSWER ===")
+    debug_print(f"\n=== SYNTHESIZING FINAL ANSWER ===")
     context = ""
     for i, sub in enumerate(sub_answers):
         context += f"Sub-question {i+1}: {sub['question']}\n"
@@ -116,8 +117,8 @@ Comprehensive answer:
     final_response = llm.complete(synthesis_prompt)
     final_answer = final_response.text
     
-    print("Final synthesized answer:")
-    print(final_answer)
+    debug_print("Final synthesized answer:")
+    debug_print(final_answer)
     
     return {
         'original_question': complex_question,

@@ -3,7 +3,7 @@ Query engine for medical RAG system.
 Based on blog post 2 code.
 """
 from typing import Dict, List
-from llama_index.core import VectorStoreIndex, Settings, StorageContext, load_index_from_storage
+from llama_index.core import Settings, StorageContext, load_index_from_storage
 from llama_index.core.response_synthesizers import ResponseMode
 
 def create_query_engine(index_path, llm, embed_model, k=5, reranker=None):

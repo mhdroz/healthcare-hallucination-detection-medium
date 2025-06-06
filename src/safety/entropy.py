@@ -4,9 +4,10 @@ Based on blog post 3 code.
 """
 import re
 import math
-import numpy as np
+#import numpy as np
 from typing import List, Dict
 from sklearn.metrics.pairwise import cosine_similarity
+from app.utils import debug_print
 
 
 def calculate_semantic_entropy(question: str, query_engine, encoder, llm, num_samples: int = 5, 
@@ -27,8 +28,8 @@ def calculate_semantic_entropy(question: str, query_engine, encoder, llm, num_sa
     Returns:
         Dictionary with entropy results
     """
-    print(f"=== CALCULATING SEMANTIC ENTROPY ===")
-    print(f"Generating {num_samples} responses with temperature={temperature}")
+    debug_print(f"=== CALCULATING SEMANTIC ENTROPY ===")
+    debug_print(f"Generating {num_samples} responses with temperature={temperature}")
     
     # Generate multiple responses with higher temperature for diversity
     responses = []
@@ -45,7 +46,7 @@ def calculate_semantic_entropy(question: str, query_engine, encoder, llm, num_sa
         if hasattr(llm, 'temperature'):
             llm.temperature = original_temp
         
-        print(f"Response {i+1}: {response.response[:80]}...")
+        debug_print(f"Response {i+1}: {response.response[:80]}...")
     
     # Sentence-level semantic clustering
     semantic_entropy = calculate_sentence_semantic_entropy(responses, encoder)
@@ -61,8 +62,8 @@ def calculate_semantic_entropy(question: str, query_engine, encoder, llm, num_sa
         interpretation = "LOW uncertainty - confident answer"
         confidence = "HIGH"
     
-    print(f"\nSemantic Entropy Score: {semantic_entropy:.3f}")
-    print(f"Interpretation: {interpretation}")
+    debug_print(f"\nSemantic Entropy Score: {semantic_entropy:.3f}")
+    debug_print(f"Interpretation: {interpretation}")
     
     return {
         'semantic_entropy': semantic_entropy,

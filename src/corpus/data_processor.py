@@ -4,7 +4,8 @@ Data processing utilities for PubMed corpus.
 import json
 import os
 from typing import List, Dict, Optional
-from pathlib import Path
+#from pathlib import Path
+from app.utils import debug_print
 
 
 class DataProcessor:
@@ -29,7 +30,7 @@ class DataProcessor:
                 json.dump(article, f, ensure_ascii=False)
                 f.write('\n')
         
-        print(f"Saved {len(articles)} articles to {output_path}")
+        debug_print(f"Saved {len(articles)} articles to {output_path}")
     
     @staticmethod
     def load_articles_jsonl(input_path: str) -> List[Dict]:
@@ -51,7 +52,7 @@ class DataProcessor:
                     article = json.loads(line)
                     articles.append(article)
         
-        print(f"Loaded {len(articles)} articles from {input_path}")
+        debug_print(f"Loaded {len(articles)} articles from {input_path}")
         return articles
     
     @staticmethod
@@ -115,7 +116,7 @@ class DataProcessor:
         for article in articles:
             # Skip invalid articles
             if not cls.validate_article(article):
-                print(f"Skipping invalid article: {article.get('pmcid', 'Unknown')}")
+                debug_print(f"Skipping invalid article: {article.get('pmcid', 'Unknown')}")
                 continue
             
             # Clean text fields
@@ -125,7 +126,7 @@ class DataProcessor:
             
             cleaned_articles.append(article)
         
-        print(f"Cleaned {len(cleaned_articles)} valid articles out of {len(articles)}")
+        debug_print(f"Cleaned {len(cleaned_articles)} valid articles out of {len(articles)}")
         return cleaned_articles
     
     @staticmethod
@@ -215,7 +216,7 @@ class DataProcessor:
                 # Skip articles with invalid dates
                 continue
         
-        print(f"Filtered to {len(filtered_articles)} articles "
+        debug_print(f"Filtered to {len(filtered_articles)} articles "
               f"(from {start_year or 'any'} to {end_year or 'any'})")
         
         return filtered_articles

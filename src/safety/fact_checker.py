@@ -5,6 +5,7 @@ Based on blog post 4 code.
 from typing import Dict, List, Tuple
 from .external_sources import generate_scholar_keywords, search_semantic_scholar, prepare_abstract_sentences
 from .attribution import check_answer_support
+from app.utils import debug_print
 
 
 def external_fact_check(answer: str, encoder, max_results: int = 10) -> Dict:
@@ -20,16 +21,16 @@ def external_fact_check(answer: str, encoder, max_results: int = 10) -> Dict:
     Returns:
         Dictionary with fact-checking results
     """
-    print("=== EXTERNAL FACT-CHECKING ===")
+    debug_print("=== EXTERNAL FACT-CHECKING ===")
     
     try:
         # Step 1: Extract keywords from the answer
-        print("Extracting keywords for external search...")
+        debug_print("Extracting keywords for external search...")
         query = generate_scholar_keywords(answer)
-        print(f"Generated query: '{query}'")
+        debug_print(f"Generated query: '{query}'")
         
         # Step 2: Search Semantic Scholar for abstracts
-        print("Searching Semantic Scholar for external sources...")
+        debug_print("Searching Semantic Scholar for external sources...")
         abstracts = search_semantic_scholar(query, max_results=max_results)
         
         if not abstracts:
@@ -52,10 +53,10 @@ def external_fact_check(answer: str, encoder, max_results: int = 10) -> Dict:
             }
         
         # Step 4: Use existing attribution function to check support
-        print("Calculating similarity with external sources...")
+        debug_print("Calculating similarity with external sources...")
         external_score, sentence_scores = check_answer_support(answer, external_sentences, encoder)
         
-        print(f"External fact-check score: {external_score:.3f}")
+        debug_print(f"External fact-check score: {external_score:.3f}")
         
         return {
             "external_support_score": external_score,
@@ -67,7 +68,7 @@ def external_fact_check(answer: str, encoder, max_results: int = 10) -> Dict:
         }
         
     except Exception as e:
-        print(f"Error during external fact-checking: {e}")
+        debug_print(f"Error during external fact-checking: {e}")
         return {
             "external_support_score": 0.0,
             "num_external_sources": 0,
@@ -120,10 +121,10 @@ def comprehensive_fact_check(answer: str, internal_sources: List[str], encoder,
     Returns:
         Comprehensive fact-checking results
     """
-    print("=== COMPREHENSIVE FACT-CHECKING ===")
+    debug_print("=== COMPREHENSIVE FACT-CHECKING ===")
     
     # Internal source attribution (from existing RAG sources)
-    print("Checking internal source attribution...")
+    debug_print("Checking internal source attribution...")
     internal_score, internal_sentence_scores = check_answer_support(answer, internal_sources, encoder)
     
     # External fact-checking
@@ -132,7 +133,7 @@ def comprehensive_fact_check(answer: str, internal_sources: List[str], encoder,
     
     # Combined analysis
     if external_result.get("error"):
-        print(f"⚠️  External fact-checking failed: {external_result['error']}")
+        print(f" External fact-checking failed: {external_result['error']}")
         combined_score = internal_score  # Fall back to internal only
         reliability = "internal_only"
     else:
@@ -144,14 +145,14 @@ def comprehensive_fact_check(answer: str, internal_sources: List[str], encoder,
     internal_interp = interpret_external_score(internal_score)
     external_interp = interpret_external_score(external_score) if not external_result.get("error") else None
     
-    print(f"\n📊 FACT-CHECKING SUMMARY:")
-    print(f"Internal Support: {internal_score:.3f} - {internal_interp['confidence']}")
+    debug_print(f"\nFACT-CHECKING SUMMARY:")
+    debug_print(f"Internal Support: {internal_score:.3f} - {internal_interp['confidence']}")
     if external_interp:
-        print(f"External Support: {external_score:.3f} - {external_interp['confidence']}")
-        print(f"Combined Score: {combined_score:.3f}")
+        debug_print(f"External Support: {external_score:.3f} - {external_interp['confidence']}")
+        debug_print(f"Combined Score: {combined_score:.3f}")
     else:
-        print(f"External Support: Failed")
-        print(f"Overall Score: {combined_score:.3f} (internal only)")
+        debug_print(f"External Support: Failed")
+        debug_print(f"Overall Score: {combined_score:.3f} (internal only)")
     
     return {
         "internal_score": internal_score,

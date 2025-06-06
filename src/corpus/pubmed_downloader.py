@@ -4,9 +4,11 @@ PubMed Central article downloader with license filtering.
 import requests
 import xml.etree.ElementTree as ET
 import time
-import os
+#import os
 from typing import List, Dict, Optional, Set
 from .license_detector import LicenseDetector
+import config as cfg
+from app.utils import debug_print
 
 
 class PubMedDownloader:
@@ -22,7 +24,7 @@ class PubMedDownloader:
         """
         self.api_key = api_key
         self.email = email
-        self.base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
+        self.base_url = cfg.NCBI_BASE_URL
         self.license_detector = LicenseDetector()
     
     def search_pmc(self, query: str, max_results: int = 100) -> List[str]:
@@ -49,13 +51,13 @@ class PubMedDownloader:
         if self.email:
             search_params["email"] = self.email
         
-        print(f"Searching PMC for: {query}")
+        debug_print(f"Searching PMC for: {query}")
         response = requests.get(search_url, params=search_params)
         response.raise_for_status()
         
         result = response.json()
         ids = result["esearchresult"]["idlist"]
-        print(f"Found {len(ids)} articles")
+        debug_print(f"Found {len(ids)} articles")
         
         return ids
     
@@ -163,7 +165,7 @@ class PubMedDownloader:
             return article_data
             
         except Exception as e:
-            print(f"Error extracting article data for PMC{pmc_id}: {e}")
+            debug_print(f"Error extracting article data for PMC{pmc_id}: {e}")
             return None
     
     def download_articles(
@@ -191,7 +193,7 @@ class PubMedDownloader:
         pmc_ids = self.search_pmc(query, max_results)
         
         if not pmc_ids:
-            print("No articles found")
+            debug_print("No articles found")
             return []
         
         articles = []
@@ -200,7 +202,7 @@ class PubMedDownloader:
         # Process in batches
         for i in range(0, len(pmc_ids), batch_size):
             batch_ids = pmc_ids[i:i + batch_size]
-            print(f"Processing batch {i//batch_size + 1} ({len(batch_ids)} articles)...")
+            debug_print(f"Processing batch {i//batch_size + 1} ({len(batch_ids)} articles)...")
             
             # Add delay between batches
             if i > 0:
@@ -226,19 +228,19 @@ class PubMedDownloader:
                     if not self.license_detector.is_allowed_license(
                         article_data["license"], allowed_licenses
                     ):
-                        print(f"Skipping PMC{pmc_id} due to license: {article_data['license']}")
+                        debug_print(f"Skipping PMC{pmc_id} due to license: {article_data['license']}")
                         skipped += 1
                         continue
                     
                     articles.append(article_data)
-                    print(f"Added PMC{pmc_id} (license: {article_data['license']})")
+                    debug_print(f"Added PMC{pmc_id} (license: {article_data['license']})")
                     
             except Exception as e:
-                print(f"Error processing batch {i//batch_size + 1}: {e}")
+                debug_print(f"Error processing batch {i//batch_size + 1}: {e}")
                 continue
         
-        print(f"\nDownload complete:")
-        print(f"- Downloaded: {len(articles)} articles")
-        print(f"- Skipped: {skipped} articles")
+        debug_print(f"\nDownload complete:")
+        debug_print(f"- Downloaded: {len(articles)} articles")
+        debug_print(f"- Skipped: {skipped} articles")
         
         return articles

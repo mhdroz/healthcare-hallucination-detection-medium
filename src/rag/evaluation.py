@@ -4,11 +4,12 @@ Based on blog post 2 evaluation code.
 """
 from typing import List, Dict
 from ragas.llms import LlamaIndexLLMWrapper
-from ragas import evaluate
+#from ragas import evaluate
 from ragas import EvaluationDataset, SingleTurnSample
 from ragas.metrics import Faithfulness, AnswerRelevancy
-from ragas.integrations.llama_index import evaluate as llama_evaluate
+from ragas.integrations.llama_index import evaluate
 import pandas as pd
+from app.utils import debug_print
 
 
 def create_pneumonia_test_questions() -> List[str]:
@@ -66,7 +67,7 @@ def evaluate_rag_system(query_engine, judge_llm, questions: List[str] = None) ->
     if questions is None:
         questions = create_pneumonia_test_questions()
     
-    print(f"🧪 Evaluating RAG system with {len(questions)} questions")
+    debug_print(f"Evaluating RAG system with {len(questions)} questions")
     
     # Create evaluation dataset
     eval_ds = create_evaluation_dataset(questions)
@@ -78,10 +79,10 @@ def evaluate_rag_system(query_engine, judge_llm, questions: List[str] = None) ->
     metrics = [Faithfulness(llm=judge), AnswerRelevancy(llm=judge)]
     
     # Run evaluation
-    print("🔍 Running RAGAS evaluation...")
-    scores = llama_evaluate(query_engine=query_engine, metrics=metrics, dataset=eval_ds)
+    debug_print("Running RAGAS evaluation...")
+    scores = evaluate(query_engine=query_engine, metrics=metrics, dataset=eval_ds)
     
-    print("✅ Evaluation complete!")
+    debug_print("Evaluation complete!")
     return scores
 
 
@@ -173,7 +174,7 @@ def plot_evaluation_results(scores):
         plt.show()
         
     except ImportError:
-        print("⚠️  matplotlib not available for plotting")
+        debug_print("matplotlib not available for plotting")
 
 
 def run_full_evaluation(query_engine, judge_llm, questions: List[str] = None, 
@@ -199,14 +200,14 @@ def run_full_evaluation(query_engine, judge_llm, questions: List[str] = None,
     # Interpret results
     interpretation = interpret_scores(summary)
     
-    # Print results
-    print("\n" + "="*50)
-    print("📊 RAGAS EVALUATION RESULTS")
-    print("="*50)
-    print(f"Questions evaluated: {summary['num_questions']}")
-    print(f"Faithfulness: {interpretation['faithfulness_score']:.3f} - {interpretation['faithfulness_interpretation']}")
-    print(f"Answer Relevancy: {interpretation['relevancy_score']:.3f} - {interpretation['relevancy_interpretation']}")
-    print(f"Overall Grade: {interpretation['overall_grade']}")
+    # debug_print results
+    debug_print("\n" + "="*50)
+    debug_print("RAGAS EVALUATION RESULTS")
+    debug_print("="*50)
+    debug_print(f"Questions evaluated: {summary['num_questions']}")
+    debug_print(f"Faithfulness: {interpretation['faithfulness_score']:.3f} - {interpretation['faithfulness_interpretation']}")
+    debug_print(f"Answer Relevancy: {interpretation['relevancy_score']:.3f} - {interpretation['relevancy_interpretation']}")
+    debug_print(f"Overall Grade: {interpretation['overall_grade']}")
     
     # Show plot if requested
     if show_plot:

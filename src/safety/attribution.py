@@ -5,6 +5,7 @@ Based on blog post 3 code.
 import re
 import numpy as np
 from typing import List, Tuple
+from app.utils import debug_print
 from sklearn.metrics.pairwise import cosine_similarity
 
 
@@ -40,7 +41,7 @@ def check_answer_support(answer: str, source_chunks: List[str], encoder) -> Tupl
         similarities = cosine_similarity([answer_emb], source_embeddings)[0]
         best_score = np.max(similarities)
         sentence_scores.append(best_score)
-        print(f"Sentence {i+1}: '{sentences[i][:50]}...' → Score: {best_score:.3f}")
+        debug_print(f"Sentence {i+1}: '{sentences[i][:50]}...' → Score: {best_score:.3f}")
     
     overall_score = np.mean(sentence_scores)
     return overall_score, sentence_scores

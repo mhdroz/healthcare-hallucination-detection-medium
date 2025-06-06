@@ -3,9 +3,10 @@ Index creation for RAG system.
 Based on blog post 2 code.
 """
 from typing import List
-from llama_index.core import Document, VectorStoreIndex, Settings, StorageContext
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.core import Document, VectorStoreIndex, Settings#, StorageContext
+#from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from .chunking import create_sentence_chunks
+from app.utils import debug_print
 
 
 def create_index(documents: List[Document], embed_model, chunk_size: int = 512, 
@@ -37,6 +38,6 @@ def create_index(documents: List[Document], embed_model, chunk_size: int = 512,
     # Save the index to disk if path provided
     if index_path:
         index.storage_context.persist(index_path)
-        print(f"Created and saved index with {len(nodes)} nodes")
+        debug_print(f"Created and saved index with {len(nodes)} nodes")
     
     return index
