@@ -1,6 +1,5 @@
-"""
-PubMed Central article downloader with license filtering.
-"""
+#PubMed Central article downloader with license filtering.
+
 import requests
 import xml.etree.ElementTree as ET
 import time

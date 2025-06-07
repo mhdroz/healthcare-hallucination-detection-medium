@@ -1,10 +1,7 @@
-"""
-Index creation for RAG system.
-Based on blog post 2 code.
-"""
+#Index creation for RAG system.
+
 from typing import List
-from llama_index.core import Document, VectorStoreIndex, Settings#, StorageContext
-#from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.core import Document, VectorStoreIndex, Settings
 from .chunking import create_sentence_chunks
 from app.utils import debug_print
 
@@ -12,7 +9,7 @@ from app.utils import debug_print
 def create_index(documents: List[Document], embed_model, chunk_size: int = 512, 
                 chunk_overlap: int = 50, index_path: str = None) -> VectorStoreIndex:
     """
-    Create index from documents (main function from blog post).
+    Create index from documents.
     
     Args:
         documents: List of Document objects

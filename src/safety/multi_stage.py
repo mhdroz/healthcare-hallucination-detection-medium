@@ -1,7 +1,5 @@
-"""
-Multi-stage retrieval for complex medical queries.
-Based on blog post 3 code.
-"""
+#Multi-stage retrieval for complex medical queries.
+
 import re
 from typing import List, Dict
 from app.utils import debug_print
@@ -10,7 +8,6 @@ from app.utils import debug_print
 def break_down_query(complex_question: str, llm) -> List[str]:
     """
     Break a complex medical question into simpler parts.
-    From blog post 3.
     
     Args:
         complex_question: Complex medical question
@@ -52,7 +49,6 @@ Provide the simpler questions as a numbered list:
 def multi_stage_retrieval(complex_question: str, query_engine, llm) -> Dict:
     """
     Perform multi-stage retrieval for complex questions.
-    From blog post 3.
     
     Args:
         complex_question: Complex question requiring multiple sources

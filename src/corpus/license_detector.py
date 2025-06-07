@@ -1,6 +1,5 @@
-"""
-License detection module for Creative Commons licenses in PubMed articles.
-"""
+#License detection module for Creative Commons licenses in PubMed articles.
+
 import re
 import xml.etree.ElementTree as ET
 from typing import Optional

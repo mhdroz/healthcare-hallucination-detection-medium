@@ -1,6 +1,5 @@
 import numpy as np
-import os
-#from .models import SafetyResponse
+import config as cfg
 
 def _sanitize_numpy_types(data):
     """Recursively sanitize NumPy numeric types for JSON serialization."""
@@ -80,8 +79,8 @@ def format_safety_response(safety_result):
     
     return response 
 
-DEBUG_MODE = os.getenv("DEBUG_MODE", "false").lower() in ("true", "1", "yes", "on")
+
 
 def debug_print(*args, **kwargs):
-    if DEBUG_MODE:
+    if cfg.DEBUG_MODE:
         print("[DEBUG]", *args, **kwargs)

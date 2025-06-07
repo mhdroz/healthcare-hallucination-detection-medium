@@ -1,8 +1,6 @@
-"""
-External fact-checking module using Semantic Scholar.
-Based on blog post 4 code.
-"""
-from typing import Dict, List, Tuple
+#External fact-checking module using Semantic Scholar.
+
+from typing import Dict, List
 from .external_sources import generate_scholar_keywords, search_semantic_scholar, prepare_abstract_sentences
 from .attribution import check_answer_support
 from app.utils import debug_print
@@ -11,7 +9,6 @@ from app.utils import debug_print
 def external_fact_check(answer: str, encoder, max_results: int = 10) -> Dict:
     """
     Fact-check an answer against external Semantic Scholar sources.
-    From blog post 4.
     
     Args:
         answer: Answer text to fact-check
@@ -63,8 +60,7 @@ def external_fact_check(answer: str, encoder, max_results: int = 10) -> Dict:
             "sentence_scores": sentence_scores,
             "num_external_sources": len(abstracts),
             "num_external_sentences": len(external_sentences),
-            "query_used": query,
-            "abstracts_sample": abstracts[:3]  # Keep sample for reference
+            "query_used": query
         }
         
     except Exception as e:

@@ -1,7 +1,5 @@
-"""
-Document processing utilities for RAG system.
-Based on blog post 2 code.
-"""
+#Document processing utilities for RAG system.
+
 import json
 from typing import List, Dict
 from llama_index.core import Document

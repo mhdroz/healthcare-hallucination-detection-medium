@@ -1,7 +1,5 @@
-"""
-Query engine for medical RAG system.
-Based on blog post 2 code.
-"""
+#Query engine for medical RAG system.
+
 from typing import Dict, List
 from llama_index.core import Settings, StorageContext, load_index_from_storage
 from llama_index.core.response_synthesizers import ResponseMode
@@ -70,7 +68,7 @@ def query_medical_rag(question: str, query_engine, embed_model) -> str:
             "score": node.score if hasattr(node, "score") else None
         })
     
-    # Format the final answer with metadata and disclaimer (from blog post)
+    # Format the final answer with metadata and disclaimer
     full_response = f"{response.response}\n\n"
     full_response += "Sources:\n"
     for i, source in enumerate(source_info):

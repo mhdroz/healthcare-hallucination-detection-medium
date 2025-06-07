@@ -1,7 +1,5 @@
-"""
-Source attribution scoring for RAG responses.
-Based on blog post 3 code.
-"""
+#Source attribution scoring for RAG responses.
+
 import re
 import numpy as np
 from typing import List, Tuple
@@ -12,7 +10,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 def check_answer_support(answer: str, source_chunks: List[str], encoder) -> Tuple[float, List[float]]:
     """
     Simple function to check how well an answer is supported by source chunks.
-    From blog post 3.
     
     Args:
         answer: The generated answer text
@@ -29,7 +26,7 @@ def check_answer_support(answer: str, source_chunks: List[str], encoder) -> Tupl
     if not sentences or not source_chunks:
         return 0.0, []
     
-    print(f"Checking {len(sentences)} sentences against {len(source_chunks)} source chunks")
+    debug_print(f"Checking {len(sentences)} sentences against {len(source_chunks)} source chunks")
     
     # Encode sentences and sources
     answer_embeddings = encoder.encode(sentences)
@@ -50,7 +47,6 @@ def check_answer_support(answer: str, source_chunks: List[str], encoder) -> Tupl
 def find_weak_sentences(answer: str, source_chunks: List[str], encoder, threshold: float = 0.5) -> List[dict]:
     """
     Identify sentences that might be hallucinated (poorly supported by sources).
-    From blog post 3.
     
     Args:
         answer: The generated answer text

@@ -1,7 +1,5 @@
-"""
-Chunking strategies for medical documents.
-Based on blog post 2 code - simple chunking options.
-"""
+#Chunking strategies for medical documents.
+
 from typing import List
 from llama_index.core import Document
 from llama_index.core.node_parser import SentenceSplitter, TokenTextSplitter, SemanticSplitterNodeParser

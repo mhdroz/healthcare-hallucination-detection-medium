@@ -1,6 +1,5 @@
-"""
-Data processing utilities for PubMed corpus.
-"""
+#Data processing utilities for PubMed corpus.
+
 import json
 import os
 from typing import List, Dict, Optional

@@ -1,10 +1,7 @@
-"""
-Semantic entropy measurement for uncertainty detection.
-Based on blog post 3 code.
-"""
+#Semantic entropy measurement for uncertainty detection.
+
 import re
 import math
-#import numpy as np
 from typing import List, Dict
 from sklearn.metrics.pairwise import cosine_similarity
 from app.utils import debug_print
@@ -15,7 +12,6 @@ def calculate_semantic_entropy(question: str, query_engine, encoder, llm, num_sa
     """
     Calculate semantic entropy to detect hallucination uncertainty.
     Higher entropy = more uncertainty = higher hallucination risk.
-    From blog post 3.
     
     Args:
         question: Question to ask
@@ -51,7 +47,7 @@ def calculate_semantic_entropy(question: str, query_engine, encoder, llm, num_sa
     # Sentence-level semantic clustering
     semantic_entropy = calculate_sentence_semantic_entropy(responses, encoder)
     
-    # Interpretation (from blog post)
+    # Interpretation
     if semantic_entropy >= 2.0:
         interpretation = "HIGH uncertainty - likely hallucination"
         confidence = "LOW"
@@ -77,7 +73,6 @@ def calculate_semantic_entropy(question: str, query_engine, encoder, llm, num_sa
 def calculate_sentence_semantic_entropy(responses: List[str], encoder) -> float:
     """
     Calculate entropy based on semantic clustering of sentences.
-    From blog post 3.
     
     Args:
         responses: List of response strings

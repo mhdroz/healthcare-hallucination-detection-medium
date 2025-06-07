@@ -1,7 +1,5 @@
-"""
-Comprehensive safety checker combining all safety methods.
-Based on blog post 3 code + external fact-checking from blog post 4.
-"""
+#Comprehensive safety checker combining all safety methods.
+
 from typing import Dict
 from .attribution import check_answer_support, find_weak_sentences
 from .consistency import check_consistency
@@ -16,7 +14,6 @@ def comprehensive_safety_check(question: str, query_engine, llm, encoder, num_tr
                                use_multi_stage: bool = False, enable_fact_check: bool = True) -> Dict:
     """
     Perform comprehensive safety checking on a RAG response.
-    Enhanced version from blog post 3 + external fact-checking from blog post 4.
     
     Args:
         question: Question to check
@@ -85,7 +82,7 @@ def comprehensive_safety_check(question: str, query_engine, llm, encoder, num_tr
     )
     semantic_entropy = entropy_result['semantic_entropy']
     
-    # Step 6: External fact-checking (NEW from blog post 4)
+    # Step 6: External fact-checking
     fact_check_result = None
     if enable_fact_check:
         debug_print(f"\n=== EXTERNAL FACT-CHECKING ===")
@@ -95,7 +92,7 @@ def comprehensive_safety_check(question: str, query_engine, llm, encoder, num_tr
             debug_print(f"External fact-checking failed: {e}")
             fact_check_result = {"error": str(e)}
     
-    # Step 7: Overall safety assessment (enhanced)
+    # Step 7: Overall safety assessment 
     debug_print(f"\n=== OVERALL SAFETY ASSESSMENT ===")
     debug_print("=" * 40)
     

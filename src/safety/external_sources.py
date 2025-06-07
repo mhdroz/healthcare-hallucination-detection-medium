@@ -1,8 +1,5 @@
-"""
-External source integration for fact-checking.
-Based on blog post 4 code.
-"""
-#import os
+#External source integration for fact-checking.
+
 import re
 import requests
 from typing import List
@@ -70,14 +67,13 @@ Rules
 Keywords:
 """
     
-    keywords = call_openai(system_prompt, user_prompt)
+    keywords = call_openai(system_prompt, user_prompt, temperature=cfg.DEFAULT_TEMPERATURE)
     return keywords.strip()
 
 
 def search_semantic_scholar(query: str, max_results: int = 10) -> List[str]:
     """
     Search Semantic Scholar for abstracts.
-    From blog post 4.
     
     Args:
         query: Search query string
@@ -112,7 +108,6 @@ def search_semantic_scholar(query: str, max_results: int = 10) -> List[str]:
 def _split_into_sentences(text: str, min_len: int = 10) -> List[str]:
     """
     Lightweight sentence splitter.
-    From blog post 4.
     
     Args:
         text: Text to split into sentences
@@ -129,7 +124,6 @@ def _split_into_sentences(text: str, min_len: int = 10) -> List[str]:
 def prepare_abstract_sentences(abstracts: List[str], min_len: int = 10) -> List[str]:
     """
     Convert abstracts to sentences for similarity scoring.
-    From blog post 4.
     
     Args:
         abstracts: List of abstract texts

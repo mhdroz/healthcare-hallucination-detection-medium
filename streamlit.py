@@ -1,12 +1,9 @@
-"""
-Streamlit frontend for Healthcare RAG System.
-Connects to FastAPI backend for transparent medical AI.
-"""
+#Streamlit frontend for Healthcare RAG System.
+#Connects to FastAPI backend for transparent medical AI.
+
 import streamlit as st
 import requests
-import json
 import plotly.graph_objects as go
-#from plotly.subplots import make_subplots
 import pandas as pd
 
 
@@ -344,8 +341,7 @@ def display_answer_and_sources(data):
     # AI Answer
     st.markdown("## 🤖 AI Response")
     st.markdown(f"**Question:** {data['question']}")
-    
-    # Answer in a nice box with better visibility
+
     st.markdown(f"""
     <div class="answer-box">
         {data['answer']}
@@ -459,7 +455,7 @@ def run_evaluation():
         st.error(f"Error connecting to backend: {e}")
     except Exception as e:
         st.error(f"Unexpected error during evaluation: {e}")
-        st.exception(e)  # This will show the full traceback in development
+        st.exception(e) 
 
 
 def main():

@@ -1,7 +1,5 @@
-"""
-Consistency checking for RAG responses.
-Based on blog post 3 code.
-"""
+#Consistency checking for RAG responses.
+
 import time
 import numpy as np
 from typing import List, Tuple
@@ -12,7 +10,6 @@ from app.utils import debug_print
 def check_consistency(question: str, query_engine, encoder, num_tries: int = 3) -> Tuple[float, List[str]]:
     """
     Ask the same question multiple times and check for consistency.
-    From blog post 3.
     
     Args:
         question: Question to ask repeatedly
@@ -30,7 +27,7 @@ def check_consistency(question: str, query_engine, encoder, num_tries: int = 3) 
         debug_print(f"Attempt {i+1}...")
         response = query_engine.query(question)
         responses.append(response.response)
-        time.sleep(1)  # Brief pause between queries
+        time.sleep(1)
     
     # Show all responses
     debug_print("\n=== ALL RESPONSES ===")

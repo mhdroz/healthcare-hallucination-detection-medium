@@ -1,15 +1,13 @@
-"""
-RAGAS evaluation for medical RAG system.
-Based on blog post 2 evaluation code.
-"""
+#RAGAS evaluation for medical RAG system.
+
 from typing import List, Dict
 from ragas.llms import LlamaIndexLLMWrapper
-#from ragas import evaluate
 from ragas import EvaluationDataset, SingleTurnSample
 from ragas.metrics import Faithfulness, AnswerRelevancy
 from ragas.integrations.llama_index import evaluate
 import pandas as pd
 from app.utils import debug_print
+import matplotlib.pyplot as plt
 
 
 def create_pneumonia_test_questions() -> List[str]:
@@ -42,7 +40,7 @@ def create_evaluation_dataset(questions: List[str]) -> EvaluationDataset:
             id=f"q{i}",
             user_input=q,  # the question
             answer=None,   # use real answers if you have them
-            contexts=[],   # and real citational chunks if you have them
+            contexts=[],   # and real chunks if you have them
         )
         for i, q in enumerate(questions)
     ]
@@ -53,7 +51,7 @@ def create_evaluation_dataset(questions: List[str]) -> EvaluationDataset:
 
 def evaluate_rag_system(query_engine, judge_llm, questions: List[str] = None) -> Dict:
     """
-    Evaluate RAG system using RAGAS metrics (from blog post 2).
+    Evaluate RAG system using RAGAS metrics.
     
     Args:
         query_engine: LlamaIndex query engine to evaluate
@@ -104,7 +102,7 @@ def get_evaluation_summary(scores) -> Dict:
 
 
 def interpret_scores(summary: Dict) -> Dict:
-    """Interpret RAGAS scores with explanations (from blog post)."""
+    """Interpret RAGAS scores with explanations."""
     faithfulness = summary["faithfulness_mean"]
     relevancy = summary["answer_relevancy_mean"]
     
@@ -153,10 +151,9 @@ def _get_overall_grade(faithfulness: float, relevancy: float) -> str:
 
 
 def plot_evaluation_results(scores):
-    """Create scatter plot from blog post 2."""
+    """Create scatter plot of faithfulness vs relevancy scores."""
     try:
-        import matplotlib.pyplot as plt
-        
+
         scores_df = scores.to_pandas()
         
         plt.figure(figsize=(8, 6))

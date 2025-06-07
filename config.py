@@ -4,16 +4,18 @@ Configuration settings for the Healthcare RAG system.
 import os
 from pathlib import Path
 
- # Embedding models
-DEFAULT_EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-BIOMEDICAL_EMBEDDING_MODEL = "pritamdeka/BioBERT-mnli-snli-scinli-scitail-mednli-stsb"  
+DEBUG_MODE = True
 
-#DEFAULT_EMBEDDING_MODEL = "pritamdeka/BioBERT-mnli-snli-scinli-scitail-mednli-stsb"
+ # Embedding models
+#DEFAULT_EMBEDDING_MODEL = "all-MiniLM-L6-v2"
+# Biomedical
+EMBEDDING_MODEL = "pritamdeka/BioBERT-mnli-snli-scinli-scitail-mednli-stsb"  
+
 # LLMs
-#OPENAI_MODEL_NAME = "gpt-4o-2024-11-20"
-OPENAI_MODEL_NAME = "gpt-4o-mini"
+OPENAI_MODEL_NAME = "gpt-4o-2024-11-20"
+#OPENAI_MODEL_NAME = "gpt-4o-mini"
 DEFAULT_TEMPERATURE = 0.1
-HIGH_TEMPERATURE = 0.8  # For semantic entropy
+HIGH_TEMPERATURE = 0.8 
 
 # Corpus 
 CORPUS_PATH = "pmc_articles.jsonl"
