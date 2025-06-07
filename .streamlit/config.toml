@@ -1,0 +1,14 @@
+[theme]
+# Force light theme
+primaryColor = "#007bff"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f8f9fa"
+textColor = "#000000"
+font = "sans serif"
+
+[server]
+port = 8501
+address = "0.0.0.0"
+
+[browser]
+gatherUsageStats = false
