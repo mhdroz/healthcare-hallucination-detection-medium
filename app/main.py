@@ -14,11 +14,11 @@ from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 
 # Import our modules
-from rag import create_query_engine
+
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.openai import OpenAI
-from llama_index.core import Settings
-from llama_index.core.postprocessor import SentenceTransformerRerank
+from llama_index.core import Settings, StorageContext, load_index_from_storage
+
 
 
 from app.routes import router
@@ -42,24 +42,30 @@ async def initialize_models(app: FastAPI):
 
     app.state.llm = OpenAI(model=cfg.OPENAI_MODEL_NAME, temperature=cfg.DEFAULT_TEMPERATURE)
     app.state.encoder = SentenceTransformer(cfg.EMBEDDING_MODEL)
+    app.state.embed_model = embed_model
     
     # Load index (configurable path)
     index_path = cfg.INDEX_PATH
     if not os.path.exists(index_path):
         raise ValueError(f"Index not found at {index_path}. Please build an index first.")
     
-    if cfg.USE_RERANKER:
-        reranker = SentenceTransformerRerank(
-            model=cfg.RERANKER_MODEL, 
-            top_n=5,
-        )
-        app.state.query_engine = create_query_engine(index_path, app.state.llm, embed_model, reranker=reranker)
-    else:
-        app.state.query_engine = create_query_engine(index_path, app.state.llm, embed_model)
+        # Load index
+    storage_context = StorageContext.from_defaults(persist_dir=index_path)
+    index = load_index_from_storage(storage_context)
+    
+    app.state.index = index
+    #if cfg.USE_RERANKER:
+    #    reranker = SentenceTransformerRerank(
+    #        model=cfg.RERANKER_MODEL, 
+    #        top_n=5,
+    #    )
+    #    app.state.query_engine = create_query_engine(index_path, app.state.llm, embed_model, reranker=reranker)
+    #else:
+    #    app.state.query_engine = create_query_engine(index_path, app.state.llm, embed_model)
 
     print("✅ Models initialized successfully!")
 
-
+    
 async def cleanup_models():
     """Cleanup models on shutdown."""
     print("🧹 Cleaning up models...")

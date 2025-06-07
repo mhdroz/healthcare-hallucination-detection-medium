@@ -12,8 +12,8 @@ DEBUG_MODE = True
 EMBEDDING_MODEL = "pritamdeka/BioBERT-mnli-snli-scinli-scitail-mednli-stsb"  
 
 # LLMs
-OPENAI_MODEL_NAME = "gpt-4o-2024-11-20"
-#OPENAI_MODEL_NAME = "gpt-4o-mini"
+#OPENAI_MODEL_NAME = "gpt-4o-2024-11-20"
+OPENAI_MODEL_NAME = "gpt-4o-mini"
 DEFAULT_TEMPERATURE = 0.1
 HIGH_TEMPERATURE = 0.8 
 

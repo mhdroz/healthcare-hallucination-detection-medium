@@ -1,12 +1,13 @@
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, FastAPI
 from fastapi.responses import RedirectResponse
 
-from .models import SafetyResponse, QueryRequest, EvaluationResponse, HealthResponse
+from .models import SafetyResponse, QueryRequest, EvaluationResponse, HealthResponse, EvaluationRequest
 from .utils import _sanitize_numpy_types, format_safety_response, debug_print
 from safety import comprehensive_safety_check
-from rag import run_full_evaluation
+from rag import run_full_evaluation, create_query_engine
 import config as cfg
 from llama_index.llms.openai import OpenAI
+from llama_index.core.postprocessor import SentenceTransformerRerank
 
 
 
@@ -17,12 +18,43 @@ async def root(request: Request):
     """Redirect to API documentation."""
     return RedirectResponse(url="/api/docs")
 
+def create_dynamic_query_engine(app: FastAPI, use_reranker: bool = False):
+    """
+    Create query engine dynamically with optional reranker.
+    
+    Args:
+        app: FastAPI app instance with models in state
+        use_reranker: Whether to use reranker
+    
+    Returns:
+        Configured query engine
+    """
+    if use_reranker:
+        try:
+
+            reranker = SentenceTransformerRerank(
+                model=cfg.RERANKER_MODEL, 
+                top_n=5,
+            )
+            return create_query_engine(
+                app.state.index, 
+                app.state.llm, 
+                app.state.embed_model, 
+                reranker=reranker
+            )
+        except Exception as e:
+            print(f"Reranker failed to load: {e}, falling back to standard retrieval")
+            return create_query_engine(app.state.index, app.state.llm, app.state.embed_model)
+    else:
+        return create_query_engine(app.state.index, app.state.llm, app.state.embed_model)
+
 
 @router.post("/api/query", response_model=SafetyResponse)
 async def handle_query(query_request: QueryRequest, request: Request):
     """Handle medical queries with full safety analysis."""
     try:
-        query_engine = request.app.state.query_engine
+        #query_engine = request.app.state.query_engine
+        query_engine = create_dynamic_query_engine(request.app, query_request.use_reranker)
         llm = request.app.state.llm
         encoder = request.app.state.encoder
 
@@ -55,10 +87,11 @@ async def handle_query(query_request: QueryRequest, request: Request):
 
 
 @router.post("/api/evaluate", response_model=EvaluationResponse)
-async def handle_evaluation(request: Request):
+async def handle_evaluation(eval_request: EvaluationRequest, request: Request):
     """Run RAGAS evaluation on the system."""
     try:
-        query_engine = request.app.state.query_engine
+        #query_engine = request.app.state.query_engine
+        query_engine = create_dynamic_query_engine(request.app, eval_request.use_reranker)
         if not query_engine:
             raise HTTPException(status_code=503, detail="Models not initialized")
             
@@ -97,9 +130,17 @@ async def handle_evaluation(request: Request):
 @router.get("/api/health", response_model=HealthResponse)
 async def health_check(request: Request):
     """Simple health check endpoint."""
+    # Check if all required models are loaded
+    models_loaded = all([
+        hasattr(request.app.state, 'index') and request.app.state.index is not None,
+        hasattr(request.app.state, 'llm') and request.app.state.llm is not None,
+        hasattr(request.app.state, 'encoder') and request.app.state.encoder is not None,
+        hasattr(request.app.state, 'embed_model') and request.app.state.embed_model is not None
+    ])
+    print(f"Models loaded: {models_loaded}")
     return HealthResponse(
-        status="healthy",
-        models_loaded=request.app.state.query_engine is not None
+        status="healthy" if models_loaded else "initializing",
+        models_loaded=models_loaded
     )
 
 

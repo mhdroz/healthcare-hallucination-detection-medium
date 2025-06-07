@@ -4,10 +4,10 @@ from typing import Dict, List
 from llama_index.core import Settings, StorageContext, load_index_from_storage
 from llama_index.core.response_synthesizers import ResponseMode
 
-def create_query_engine(index_path, llm, embed_model, k=5, reranker=None):
+def create_query_engine(index, llm, embed_model, k=5, reranker=None):
     # Load the index
-    storage_context = StorageContext.from_defaults(persist_dir=index_path)
-    index = load_index_from_storage(storage_context)
+    #storage_context = StorageContext.from_defaults(persist_dir=index_path)
+    #index = load_index_from_storage(storage_context)
 
     # Configure the LLM
     Settings.llm = llm

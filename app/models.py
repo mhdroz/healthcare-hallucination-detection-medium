@@ -5,6 +5,7 @@ class QueryRequest(BaseModel):
     question: str = Field(..., min_length=1, max_length=1000, description="Medical question to analyze")
     multi_stage: bool = Field(False, description="Use multi-stage retrieval")
     fact_check: bool = Field(True, description="Enable external fact-checking")
+    use_reranker: bool = Field(False, description="Use reranker for better retrieval")
     consistency_tries: int = Field(3, ge=2, le=10, description="Number of consistency checks")
 
 
@@ -24,6 +25,18 @@ class SafetyResponse(BaseModel):
     external_validation: Optional[dict] = None
     safety_interpretations: dict
     source_chunks: list
+
+class EvaluationRequest(BaseModel):
+    use_reranker: bool = Field(False, description="Use reranker during evaluation")
+    num_questions: int = Field(12, ge=5, le=20, description="Number of test questions to evaluate")
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "use_reranker": False,
+                "num_questions": 12
+            }
+        }
 
 
 class EvaluationResponse(BaseModel):
