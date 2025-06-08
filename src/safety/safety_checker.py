@@ -78,7 +78,7 @@ def comprehensive_safety_check(question: str, query_engine, llm, encoder, num_tr
     
     # Step 5: Calculate semantic entropy
     entropy_result = calculate_semantic_entropy(
-        question, query_engine, encoder, llm, num_samples=3, temperature=cfg.HIGH_TEMPERATURE
+        question, query_engine, encoder, llm, num_samples=cfg.NUM_SAMPLES_ENTROPY, temperature=cfg.HIGH_TEMPERATURE
     )
     semantic_entropy = entropy_result['semantic_entropy']
     

@@ -32,15 +32,15 @@ def create_query_engine(index, llm, embed_model, use_reranker=False):
 
     # Add the reranker
     if use_reranker:
-        k = 12
+        k = cfg.EXTENDED_SIMILARITY_TOP_K
         reranker = SentenceTransformerRerank(
                 model=cfg.RERANKER_MODEL, 
-                top_n=5,
+                top_n=cfg.DEFAULT_SIMILARITY_TOP_K,
             )
         qe_kwargs["node_postprocessors"] = [reranker]
         qe_kwargs['similarity_top_k'] = k
     else:
-        k = 5
+        k = cfg.DEFAULT_SIMILARITY_TOP_K
         qe_kwargs['similarity_top_k'] = k
 
 
