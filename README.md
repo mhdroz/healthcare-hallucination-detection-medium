@@ -1,12 +1,12 @@
 # Transparent and Trustworthy Healthcare RAG
 
-This project provides a complete framework for building and evaluating a Retrieval-Augmented Generation (RAG) system for the healthcare domain. It features a web interface built with FastAPI and a sophisticated backend that incorporates multiple layers of safety checks to mitigate AI hallucinations and ensure the reliability of generated answers.
+This project provides a complete framework for building and evaluating a Retrieval-Augmented Generation (RAG) system for the healthcare domain. It features an interactive web interface built with Streamlit and a sophisticated backend that incorporates multiple layers of safety checks to mitigate AI hallucinations and ensure the reliability of generated answers.
 
 The primary goal is to create a transparent and trustworthy medical AI that not only provides answers but also shows the evidence supporting them and gives a clear confidence score based on a rigorous, multi-faceted analysis.
 
 ## ✨ Key Features
 
-- **Interactive Web Interface**: A clean UI built with FastAPI, Bootstrap, and JavaScript to query the RAG system and view detailed results.
+- **Interactive Streamlit Interface**: A clean, responsive web UI built with Streamlit for querying the RAG system and viewing detailed results in real-time.
 - **Comprehensive Safety Analysis**: Each answer is subjected to a suite of safety checks before being shown to the user.
 - **Attribution & Groundedness**: Verifies that the AI's answer is strongly supported by the retrieved medical literature.
 - **Response Consistency**: Checks for stability by running multiple generation attempts to see if the core meaning remains consistent.
@@ -25,7 +25,7 @@ The system follows a multi-stage process when a user submits a query:
 2.  **Reranking**: A reranker model re-orders the retrieved chunks to place the most relevant ones at the top.
 3.  **Synthesis & Generation**: The top-ranked chunks and the original question are passed to a Large Language Model (e.g., GPT-4) which generates a synthesized answer.
 4.  **Comprehensive Safety Check**: This is the crucial step. Before returning the answer, the system performs the multi-layered safety analysis described above (attribution, consistency, entropy, etc.).
-5.  **Response & Display**: The final answer, along with all the safety scores, interpretations, and source documents, is sent to the FastAPI backend and rendered in the user interface.
+5.  **Response & Display**: The final answer, along with all the safety scores, interpretations, and source documents, is displayed in the Streamlit interface with interactive visualizations and collapsible sections.
 
 ## 🚀 Getting Started
 
@@ -62,59 +62,50 @@ Create a file named `.env` in the root of the project directory and add your Ope
 OPENAI_API_KEY="sk-..."
 ```
 
-**5. Download the data corpus:**
-The RAG system relies on a corpus of medical documents. Run the download script:
-```bash
-python -m scripts.download_corpus
-```
-This will download the necessary files into the `data/raw/` directory.
-
-**6. Build the Vector Index:**
-Next, process the raw data and build the vector index that the RAG system will query.
-```bash
-python -m scripts.build_index
-```
-This script will create a LlamaIndex vector store in the `data/indices/` directory.
+**5. Ensure data and index are available:**
+The RAG system relies on a pre-built vector index of medical documents. Make sure you have the necessary data files in the `data/` directory structure as specified in the configuration.
 
 ### 3. Running the Application
 
-Once the setup is complete, you can start the web application.
+Once the setup is complete, you can start the Streamlit web application:
 
 ```bash
-python -m app.main
+streamlit run streamlit.py
 ```
 
-The server will start. You can access the web interface by navigating to:
-[**http://localhost:8000**](http://localhost:8000)
+The Streamlit server will start and automatically open your default web browser. If it doesn't open automatically, you can access the interface at:
+[**http://localhost:8501**](http://localhost:8501)
 
-The API documentation is also available at `http://localhost:8000/api/docs`.
+## 🎯 Using the Interface
+
+The Streamlit interface provides:
+- **Query Input**: Enter your medical question in the text area
+- **Configuration Options**: Adjust safety check parameters, consistency trials, and enable/disable fact-checking
+- **Real-time Results**: View the AI's response with comprehensive safety analysis
+- **Source Documents**: Expandable sections showing the exact literature used to generate the answer
+- **Safety Metrics**: Visual indicators for attribution, consistency, uncertainty, and overall confidence
+- **Evaluation Tools**: Built-in RAGAS evaluation for system performance assessment
 
 ## 📁 Project Structure
 
 ```
 .
-├── app/                  # FastAPI Web Application
-│   ├── main.py           # App entrypoint, startup/shutdown logic
-│   ├── routes.py         # API endpoint definitions
-│   ├── models.py         # Pydantic models for API
-│   ├── utils.py          # Helper functions for the web app
-│   ├── static/           # CSS and JavaScript files
-│   └── templates/        # Jinja2 HTML templates
-│
-├── scripts/              # Standalone scripts
-│   ├── download_corpus.py # Downloads raw data
-│   └── build_index.py    # Builds the LlamaIndex vector store
+├── streamlit.py          # Main Streamlit application
+├── config.py             # Central configuration file
+├── requirements.txt      # Python dependencies
+├── README.md             # This file
 │
 ├── src/                  # Core backend logic
 │   ├── rag/              # RAG pipeline implementation
 │   ├── safety/           # Safety check implementations
-│   └── corpus/           # Data loading and processing
+│   ├── corpus/           # Data loading and processing
+│   └── utils/            # Shared utilities
 │
 ├── data/                 # Project data
 │   ├── raw/              # Raw downloaded documents
 │   └── indices/          # Stored vector indices
 │
-├── config.py             # Central configuration file
-├── requirements.txt      # Python dependencies
-└── README.md             # This file
+├── notebooks/            # Jupyter notebooks for exploration
+├── tests/                # Unit tests
+└── docs/                 # Documentation
 ```

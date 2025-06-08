@@ -1,13 +1,12 @@
 #Query engine for medical RAG system.
 
-from typing import Dict, List
-from llama_index.core import Settings, StorageContext, load_index_from_storage
+from llama_index.core import Settings
 from llama_index.core.response_synthesizers import ResponseMode
+from llama_index.core.postprocessor import SentenceTransformerRerank
+import config as cfg
 
-def create_query_engine(index, llm, embed_model, k=5, reranker=None):
-    # Load the index
-    #storage_context = StorageContext.from_defaults(persist_dir=index_path)
-    #index = load_index_from_storage(storage_context)
+
+def create_query_engine(index, llm, embed_model, use_reranker=False):
 
     # Configure the LLM
     Settings.llm = llm
@@ -29,12 +28,21 @@ def create_query_engine(index, llm, embed_model, k=5, reranker=None):
     Question: {query_str}
 
     Answer:""",
-        "similarity_top_k": k,
     }
 
-    # Add the reranker only if it's defined
-    if reranker:
+    # Add the reranker
+    if use_reranker:
+        k = 12
+        reranker = SentenceTransformerRerank(
+                model=cfg.RERANKER_MODEL, 
+                top_n=5,
+            )
         qe_kwargs["node_postprocessors"] = [reranker]
+        qe_kwargs['similarity_top_k'] = k
+    else:
+        k = 5
+        qe_kwargs['similarity_top_k'] = k
+
 
     # Build the query engine
     query_engine = index.as_query_engine(**qe_kwargs)

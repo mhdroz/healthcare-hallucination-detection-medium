@@ -13,6 +13,7 @@ from .evaluation import (
     run_full_evaluation,
     plot_evaluation_results
 )
+from .multi_stage import break_down_query, multi_stage_retrieval
 
 __all__ = [
     "DocumentProcessor",
@@ -25,5 +26,7 @@ __all__ = [
     "create_pneumonia_test_questions",
     "evaluate_rag_system",
     "run_full_evaluation", 
-    "plot_evaluation_results"
+    "plot_evaluation_results",
+    "break_down_query",
+    "multi_stage_retrieval"
 ]

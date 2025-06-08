@@ -54,14 +54,6 @@ async def initialize_models(app: FastAPI):
     index = load_index_from_storage(storage_context)
     
     app.state.index = index
-    #if cfg.USE_RERANKER:
-    #    reranker = SentenceTransformerRerank(
-    #        model=cfg.RERANKER_MODEL, 
-    #        top_n=5,
-    #    )
-    #    app.state.query_engine = create_query_engine(index_path, app.state.llm, embed_model, reranker=reranker)
-    #else:
-    #    app.state.query_engine = create_query_engine(index_path, app.state.llm, embed_model)
 
     print("✅ Models initialized successfully!")
 

@@ -12,8 +12,8 @@ DEBUG_MODE = True
 EMBEDDING_MODEL = "pritamdeka/BioBERT-mnli-snli-scinli-scitail-mednli-stsb"  
 
 # LLMs
-#OPENAI_MODEL_NAME = "gpt-4o-2024-11-20"
-OPENAI_MODEL_NAME = "gpt-4o-mini"
+OPENAI_MODEL_NAME = "gpt-4o-2024-11-20"
+#OPENAI_MODEL_NAME = "gpt-4o-mini"
 DEFAULT_TEMPERATURE = 0.1
 HIGH_TEMPERATURE = 0.8 
 
@@ -33,7 +33,7 @@ DEFAULT_ALLOWED_LICENSES = {"cc-by", "cc-by-sa", "cc0"}
 DEFAULT_CHUNK_SIZE = 512
 DEFAULT_CHUNK_OVERLAP = 50
 DEFAULT_SIMILARITY_TOP_K = 5
-USE_RERANKER = False
+#USE_RERANKER = False
 RERANKER_MODEL = "mixedbread-ai/mxbai-rerank-base-v1"
 
 # Safety thresholds

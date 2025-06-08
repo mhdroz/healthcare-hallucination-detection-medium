@@ -4,7 +4,7 @@ from typing import Dict
 from .attribution import check_answer_support, find_weak_sentences
 from .consistency import check_consistency
 from .entropy import calculate_semantic_entropy
-from .multi_stage import multi_stage_retrieval
+from src.rag.multi_stage import multi_stage_retrieval
 from .fact_checker import comprehensive_fact_check
 import config as cfg
 from app.utils import debug_print
