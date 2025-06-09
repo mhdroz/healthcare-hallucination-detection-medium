@@ -378,84 +378,106 @@ def display_answer_and_sources(data):
                 st.text(chunk.get('text', 'No content available')[:1000] + ('...' if len(chunk.get('text', '')) > 1000 else ''))
 
 
-def run_evaluation():
+def run_evaluation(use_reranker, fact_check):
     """Run RAGAS evaluation on the system."""
+    
+    # Get current reranker setting from the main interface
+    # We'll read it from session state or use a default
+    current_reranker = st.session_state.get('use_reranker', False)
+    
+
+    #if st.button("🧪 Run RAGAS Evaluation", key="main_evaluation",help="Test system with pneumonia questions"):
     try:
-        with st.spinner("Running RAGAS evaluation on test questions..."):
-            response = requests.post(f"{API_BASE}/evaluate", timeout=300)
+            # Prepare evaluation request with new structure
+            eval_request = {
+                "use_reranker": use_reranker,
+                "num_questions": 12
+            }
             
-        if response.status_code == 200:
-            eval_data = response.json()
-            
-            st.success("✅ Evaluation completed!")
-            
-            # Display results
-            col1, col2, col3 = st.columns(3)
-            
-            with col1:
-                st.metric(
-                    "Faithfulness", 
-                    f"{eval_data['faithfulness_score']:.1%}",
-                    help="How well answers are grounded in sources"
+            reranker_text = "with reranker" if use_reranker else "without reranker"
+            with st.spinner(f"Running RAGAS evaluation on 12 questions {reranker_text}..."):
+                response = requests.post(
+                    f"{API_BASE}/evaluate", 
+                    json=eval_request,  # Send as JSON body
+                    timeout=300
                 )
-                st.caption(eval_data['faithfulness_interpretation'])
-            
-            with col2:
-                st.metric(
-                    "Answer Relevancy", 
-                    f"{eval_data['relevancy_score']:.1%}",
-                    help="How relevant answers are to questions"
-                )
-                st.caption(eval_data['relevancy_interpretation'])
-            
-            with col3:
-                st.metric("Overall Grade", eval_data['overall_grade'])
-                st.caption(f"Based on {eval_data['num_questions']} test questions")
-            
-            # Detailed scores
-            if eval_data.get('detailed_scores'):
-                st.markdown("### 📊 Detailed Question Scores")
-                df = pd.DataFrame(eval_data['detailed_scores'])
-                if not df.empty:
-                    st.dataframe(df, use_container_width=True)
-                    
-                    # Create scatter plot - check which columns exist
-                    if 'faithfulness' in df.columns and 'answer_relevancy' in df.columns:
-                        fig = go.Figure()
+                
+            if response.status_code == 200:
+                eval_data = response.json()
+                
+                st.success("✅ Evaluation completed!")
+                
+                # Show configuration used
+                #st.info(f"🔧 Configuration: Reranker {'✅ ON' if eval_use_reranker else '❌ OFF'} | Questions: {eval_num_questions}")
+                
+                # Display results
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    st.metric(
+                        "Faithfulness", 
+                        f"{eval_data['faithfulness_score']:.1%}",
+                        help="How well answers are grounded in sources"
+                    )
+                    st.caption(eval_data['faithfulness_interpretation'])
+                
+                with col2:
+                    st.metric(
+                        "Answer Relevancy", 
+                        f"{eval_data['relevancy_score']:.1%}",
+                        help="How relevant answers are to questions"
+                    )
+                    st.caption(eval_data['relevancy_interpretation'])
+                
+                with col3:
+                    st.metric("Overall Grade", eval_data['overall_grade'])
+                    st.caption(f"Based on {eval_data['num_questions']} test questions")
+                
+                # Detailed scores
+                if eval_data.get('detailed_scores'):
+                    st.markdown("### 📊 Detailed Question Scores")
+                    df = pd.DataFrame(eval_data['detailed_scores'])
+                    if not df.empty:
+                        st.dataframe(df, use_container_width=True)
                         
-                        # Use index as text if 'id' column doesn't exist
-                        hover_text = df.get('id', df.index).astype(str)
-                        
-                        fig.add_trace(go.Scatter(
-                            x=df['faithfulness'],
-                            y=df['answer_relevancy'],
-                            mode='markers',
-                            marker=dict(size=10, opacity=0.7),
-                            text=hover_text,
-                            hovertemplate="<b>Question %{text}</b><br>" +
-                                        "Faithfulness: %{x:.3f}<br>" +
-                                        "Relevancy: %{y:.3f}<extra></extra>",
-                            name='Questions'
-                        ))
-                        fig.update_layout(
-                            title="RAGAS Scores per Question",
-                            xaxis_title="Faithfulness",
-                            yaxis_title="Answer Relevancy",
-                            height=400
-                        )
-                        st.plotly_chart(fig, use_container_width=True)
+                        # Create scatter plot - check which columns exist
+                        if 'faithfulness' in df.columns and 'answer_relevancy' in df.columns:
+                            fig = go.Figure()
+                            
+                            # Use index as text if 'id' column doesn't exist
+                            hover_text = df.get('id', df.index).astype(str)
+                            
+                            fig.add_trace(go.Scatter(
+                                x=df['faithfulness'],
+                                y=df['answer_relevancy'],
+                                mode='markers',
+                                marker=dict(size=10, opacity=0.7),
+                                text=hover_text,
+                                hovertemplate="<b>Question %{text}</b><br>" +
+                                            "Faithfulness: %{x:.3f}<br>" +
+                                            "Relevancy: %{y:.3f}<extra></extra>",
+                                name='Questions'
+                            ))
+                            fig.update_layout(
+                                title="RAGAS Scores per Question",
+                                xaxis_title="Faithfulness",
+                                yaxis_title="Answer Relevancy",
+                                height=400
+                            )
+                            st.plotly_chart(fig, use_container_width=True)
+                        else:
+                            st.warning("Cannot create scatter plot - missing required columns in evaluation data")
                     else:
-                        st.warning("Cannot create scatter plot - missing required columns in evaluation data")
-                else:
-                    st.info("No detailed scores available in evaluation results")
-        else:
-            st.error(f"Evaluation failed: {response.text}")
-            
+                        st.info("No detailed scores available in evaluation results")
+            else:
+                error_detail = response.json().get('detail', 'Unknown error') if response.headers.get('content-type') == 'application/json' else response.text
+                st.error(f"Evaluation failed: {error_detail}")
+                
     except requests.exceptions.RequestException as e:
-        st.error(f"Error connecting to backend: {e}")
+            st.error(f"Error connecting to backend: {e}")
     except Exception as e:
-        st.error(f"Unexpected error during evaluation: {e}")
-        st.exception(e) 
+            st.error(f"Unexpected error during evaluation: {e}")
+            st.exception(e)
 
 
 def main():
@@ -497,12 +519,15 @@ def main():
         st.subheader("🛡️ Safety Options")
         fact_check = st.checkbox("External Fact-Checking", value=True, help="Validate against Semantic Scholar")
         multi_stage = st.checkbox("Multi-stage Retrieval", value=False, help="Break complex questions into parts")
+        use_reranker = st.checkbox("Use Reranker", value=False, help="Improve retrieval quality with reranking")
         consistency_tries = st.slider("Consistency Checks", 2, 10, 3, help="Number of consistency tests")
         
+        st.session_state.use_reranker = use_reranker
+
         # System evaluation
         st.subheader("📊 System Evaluation")
-        if st.button("🧪 Run RAGAS Evaluation", help="Test system with pneumonia questions"):
-            run_evaluation()
+        if st.button("🧪 Run RAGAS Evaluation", key="sidebar_evaluation", help="Test system with pneumonia questions"):
+            run_evaluation(use_reranker, fact_check)
     
     # Main content area
     st.header("❓ Ask a Medical Question")
@@ -527,6 +552,7 @@ def main():
             "question": question,
             "multi_stage": multi_stage,
             "fact_check": fact_check,
+            "use_reranker": use_reranker,
             "consistency_tries": consistency_tries
         }
         

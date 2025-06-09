@@ -42,6 +42,7 @@ Edit config.py to set your preferred models (OpenAI, reranker, embedding model, 
 ```
 uvicorn app.main:app --reload --port 8000
 ```
+
 5. **Run the dashboard (Streamlit)**
 ```
 streamlit run streamlit.py

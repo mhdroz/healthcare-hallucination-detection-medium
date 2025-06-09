@@ -5,6 +5,7 @@ import math
 from typing import List, Dict
 from sklearn.metrics.pairwise import cosine_similarity
 from app.utils import debug_print
+import config as cfg
 
 
 def calculate_semantic_entropy(question: str, query_engine, encoder, llm, num_samples: int = 5, 
@@ -31,7 +32,7 @@ def calculate_semantic_entropy(question: str, query_engine, encoder, llm, num_sa
     responses = []
     for i in range(num_samples):
         # Temporarily increase temperature for diversity
-        original_temp = getattr(llm, 'temperature', 0.1)
+        original_temp = getattr(llm, 'temperature', cfg.DEFAULT_TEMPERATURE)
         if hasattr(llm, 'temperature'):
             llm.temperature = temperature
         

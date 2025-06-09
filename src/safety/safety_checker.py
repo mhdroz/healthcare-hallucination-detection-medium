@@ -4,7 +4,7 @@ from typing import Dict
 from .attribution import check_answer_support, find_weak_sentences
 from .consistency import check_consistency
 from .entropy import calculate_semantic_entropy
-from .multi_stage import multi_stage_retrieval
+from src.rag.multi_stage import multi_stage_retrieval
 from .fact_checker import comprehensive_fact_check
 import config as cfg
 from app.utils import debug_print
@@ -78,7 +78,7 @@ def comprehensive_safety_check(question: str, query_engine, llm, encoder, num_tr
     
     # Step 5: Calculate semantic entropy
     entropy_result = calculate_semantic_entropy(
-        question, query_engine, encoder, llm, num_samples=3, temperature=cfg.HIGH_TEMPERATURE
+        question, query_engine, encoder, llm, num_samples=cfg.NUM_SAMPLES_ENTROPY, temperature=cfg.HIGH_TEMPERATURE
     )
     semantic_entropy = entropy_result['semantic_entropy']
     
