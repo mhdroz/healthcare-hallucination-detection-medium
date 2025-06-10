@@ -74,7 +74,7 @@ Then open your browser at http://localhost:8501
 Part 1: [Why Hallucinations Matter in Healthcare](https://pub.towardsai.net/hallucinations-in-healthcare-llms-why-they-happen-and-how-to-prevent-them-614d845242f4)
 Part 2: [Building a RAG System](https://medium.com/towards-artificial-intelligence/how-to-build-a-rag-system-for-healthcare-minimize-hallucinations-in-llm-outputs-0b8ea4a4eaae)
 Part 3: [Detecting Hallucinations](https://medium.com/towards-artificial-intelligence/detecting-hallucinations-in-healthcare-ai-99aa67e55bb7)
-Part 4: [Building a Transparent Interface]()
+Part 4: [Building a Transparent Interface](https://medium.com/towards-artificial-intelligence/from-black-box-to-dashboard-how-we-built-a-transparent-interface-for-healthcare-ai-a62de4b05e4b)
 
 ## Contributing
 Feel free to fork, play, and adapt the system to your own domain.
