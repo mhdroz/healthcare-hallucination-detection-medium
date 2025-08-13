@@ -50,6 +50,7 @@ streamlit run streamlit.py
 Then open your browser at http://localhost:8501
 
 ## Project Structure
+```
 .
 ├── streamlit.py          # Main frontend app (Streamlit)
 ├── config.py             # Central configuration and paths
@@ -69,6 +70,7 @@ Then open your browser at http://localhost:8501
 │   └── indices/          # Vector indices
 │
 ├── notebooks/            # Jupyter notebooks from previous blog posts
+```
 
 ## Blog Series
 Part 1: [Why Hallucinations Matter in Healthcare](https://pub.towardsai.net/hallucinations-in-healthcare-llms-why-they-happen-and-how-to-prevent-them-614d845242f4)
